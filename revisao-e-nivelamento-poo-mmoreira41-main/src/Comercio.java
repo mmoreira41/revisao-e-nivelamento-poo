@@ -49,17 +49,24 @@ public class Comercio {
         return Integer.parseInt(teclado.nextLine());
     }
 
-    /**
-     * Lê os dados de um arquivo texto e retorna um vetor de produtos. Arquivo no formato
-     * N  (quantiade de produtos) <br/>
-     * tipo; descrição;preçoDeCusto;margemDeLucro;[dataDeValidade] <br/>
-     * Deve haver uma linha para cada um dos produtos. Retorna um vetor vazio em caso de problemas com o arquivo.
-     * @param nomeArquivoDados Nome do arquivo de dados a ser aberto.
-     * @return Um vetor com os produtos carregados, ou vazio em caso de problemas de leitura.
-     */
     static Produto[] lerProdutos(String nomeArquivoDados) {
         Produto[] vetorProdutos;
-        //TO DO
+        Scanner arqDados = null;
+
+        try{
+            arqDados = new Scanner(new File(nomeArquivoDados));
+            quantosProdutos = Integer.parseInt(arqDados.nextLine());
+            vetorProdutos = new Produto[quantosProdutos+MAX_NOVOS_PRODUTOS];
+            for(int i = 0; i < quantosProdutos; i++){
+                String linha = arqDados.nextLine();
+                vetorProdutos[i] = Produto.criarDoTexto(linha);
+            }
+        }
+        catch(IOException fne){
+            vetorProdutos = null;
+        } finally{
+            arqDados.close();
+        }
         return vetorProdutos;
     }
 
@@ -94,7 +101,20 @@ public class Comercio {
      * @param nomeArquivo Nome do arquivo a ser gravado.
      */
     public static void salvarProdutos(String nomeArquivo){
-        //TO DO  
+        try{
+            FileWriter arquivoSaida = new FileWriter(Charset.forName("UTF-8"));
+            arquivoSaida.append(quantosProdutos + "\n");
+            for(int i = 0; i < produtosCadastrados.length; i++){
+                if(produtosCadastrados[i] != null){
+                    arquivoSaida.append(produtosCadastrados[i].gerarDadosTexto() + "\n");
+                }
+            }
+            arquivoSaida.close();
+            System.out.println("Produtos salvos com sucesso!");
+        }
+        catch(IOException e){
+            System.out.println("Erro ao salvar produtos: " + e.getMessage());
+        }
     }
 
     public static void main(String[] args) throws Exception {
