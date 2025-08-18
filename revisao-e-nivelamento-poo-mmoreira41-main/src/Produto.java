@@ -96,9 +96,34 @@ public abstract class Produto {
      * @return Um produto com os dados recebidos
      */
     static Produto criarDoTexto(String linha){
-        Produto novoProduto = null;
-        //TO DO
-        return novoProduto;
+
+        static Produto criarDoTexto(String linha){
+            // if (linha == null || linha.isBlank())
+            //   throw new IllegalArgumentException("Linha inválida");
+          
+            // String[] atributos = linha.split(";");
+            // if (atributos.length < 4)
+            //   throw new IllegalArgumentException("Dados insuficientes");
+          
+            int tipo = Integer.parseInt(atributos[0].trim());
+            String descricao = atributos[1].trim();
+            double precoCusto = Double.parseDouble(atributos[2].trim());
+            double margemLucro = Double.parseDouble(atributos[3].trim());
+          
+            if (tipo == 1) {
+              return new ProdutoNaoPerecivel(descricao, precoCusto, margemLucro);
+            } else if (tipo == 2) {
+              if (atributos.length < 5 || atributos[4].trim().isEmpty())
+                throw new IllegalArgumentException("Falta data de validade para produto perecível");
+              LocalDate validade = LocalDate.parse(
+                atributos[4].trim(),
+                DateTimeFormatter.ofPattern("dd/MM/yyyy")
+              );
+              return new ProdutoPerecivel(descricao, precoCusto, margemLucro, validade);
+            } else {
+              throw new IllegalArgumentException("Tipo de produto inválido: " + tipo);
+            }
+          }
     }
 
     /**
